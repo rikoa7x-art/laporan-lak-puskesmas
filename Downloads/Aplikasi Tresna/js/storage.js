@@ -223,23 +223,25 @@ const Storage = {
             throw new Error("Firebase belum dinkonfigurasi. Silakan penuhi kredensial di firebase-config.js.");
         }
 
-        const userId = window.FirebaseManager.getUserId();
-        if (!userId) {
-            throw new Error("Gagal mengenali pengguna (Belum Login/Anonymous).");
+        const profile = this.getProfile();
+        const syncKey = profile.nip ? profile.nip.replace(/\\s+/g, '') : null;
+
+        if (!syncKey) {
+            throw new Error("Mohon isi 'NIP' di form Profil Pegawai terlebih dahulu. NIP digunakan sebagai Kunci rahasia sinkronisasi antar perangkat.");
         }
 
         const dataToSync = this.exportAllData();
         const db = window.FirebaseManager.getDb();
 
         try {
-            await db.collection("users").doc(userId).set({
+            await db.collection("users").doc(syncKey).set({
                 appData: dataToSync,
                 lastSync: firebase.firestore.FieldValue.serverTimestamp()
             });
             return true;
         } catch (error) {
             console.error("Cloud Sync Up Error:", error);
-            throw error;
+            throw new Error("Gagal mengunggah ke Cloud. Pastikan internet stabil.");
         }
     },
 
@@ -248,25 +250,27 @@ const Storage = {
             throw new Error("Firebase belum dinkonfigurasi. Silakan penuhi kredensial di firebase-config.js.");
         }
 
-        const userId = window.FirebaseManager.getUserId();
-        if (!userId) {
-            throw new Error("Gagal mengenali pengguna (Belum Login/Anonymous).");
+        const profile = this.getProfile();
+        const syncKey = profile.nip ? profile.nip.replace(/\\s+/g, '') : null;
+
+        if (!syncKey) {
+            throw new Error("Mohon isi 'NIP' di form Profil Pegawai terlebih dahulu untuk menarik data Cloud Anda.");
         }
 
         const db = window.FirebaseManager.getDb();
 
         try {
-            const doc = await db.collection("users").doc(userId).get();
+            const doc = await db.collection("users").doc(syncKey).get();
             if (doc.exists && doc.data().appData) {
                 const isImported = this.importAllData(doc.data().appData);
                 if (!isImported) throw new Error("Gagal menerapkan data dari Cloud.");
                 return doc.data().lastSync;
             } else {
-                throw new Error("Tidak ada data tersimpan di Cloud.");
+                throw new Error("Tidak ada data tersimpan di Cloud untuk NIP ini.");
             }
         } catch (error) {
             console.error("Cloud Sync Down Error:", error);
-            throw error;
+            throw new Error("Gagal mengunduh dari Cloud. Periksa koneksi atau pastikan NIP sesuai.");
         }
     }
 };
