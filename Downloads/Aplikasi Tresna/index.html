@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAK Puskesmas - Laporan Aktivitas Kerja</title>
+    <meta name="description" content="Aplikasi Laporan Aktivitas Kerja untuk Puskesmas">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">📋</div>
+                <span class="logo-text">LAK Puskesmas</span>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="daily-input">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Input Harian</span>
+                </a>
+                <a href="#" class="nav-item" data-page="templates">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-label">Template</span>
+                </a>
+                <a href="#" class="nav-item" data-page="reports">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Laporan</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Pengaturan</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">TS</div>
+                    <div class="user-details">
+                        <span class="user-name" id="sidebar-user-name">-</span>
+                        <span class="user-role" id="sidebar-user-role">Perawat</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menu-toggle">☰</button>
+                    <h1 class="page-title" id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="current-date" id="current-date"></div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area" id="content-area">
+                <!-- Dashboard Page -->
+                <div class="page active" id="page-dashboard">
+                    <div class="dashboard-grid">
+                        <!-- Stats Cards -->
+                        <div class="stats-container">
+                            <div class="stat-card gradient-blue">
+                                <div class="stat-icon">📅</div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-days">0</span>
+                                    <span class="stat-label">Hari Kerja</span>
+                                </div>
+                            </div>
+                            <div class="stat-card gradient-purple">
+                                <div class="stat-icon">⏱️</div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-minutes">0</span>
+                                    <span class="stat-label">Total Menit</span>
+                                </div>
+                            </div>
+                            <div class="stat-card gradient-green">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-patients">0</span>
+                                    <span class="stat-label">Total Pasien</span>
+                                </div>
+                            </div>
+                            <div class="stat-card gradient-orange">
+                                <div class="stat-icon">📋</div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-activities">0</span>
+                                    <span class="stat-label">Aktivitas</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="card quick-actions">
+                            <h3 class="card-title">Aksi Cepat</h3>
+                            <div class="action-buttons">
+                                <button class="action-btn primary" id="btn-input-today">
+                                    <span class="btn-icon">➕</span>
+                                    Input Hari Ini
+                                </button>
+                                <button class="action-btn secondary" id="btn-import-excel">
+                                    <span class="btn-icon">📥</span>
+                                    Import Excel
+                                </button>
+                                <button class="action-btn secondary" id="btn-export-report">
+                                    <span class="btn-icon">📤</span>
+                                    Export Laporan
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activities -->
+                        <div class="card recent-activities">
+                            <h3 class="card-title">Aktivitas Terbaru</h3>
+                            <div class="activity-list" id="recent-activity-list">
+                                <div class="empty-state">
+                                    <span class="empty-icon">📭</span>
+                                    <p>Belum ada aktivitas tercatat</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Summary -->
+                        <div class="card monthly-summary">
+                            <h3 class="card-title">Ringkasan Bulan Ini</h3>
+                            <div class="summary-chart" id="monthly-chart">
+                                <div class="chart-placeholder">
+                                    <span>📊</span>
+                                    <p>Data akan ditampilkan di sini</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Input Page -->
+                <div class="page" id="page-daily-input">
+                    <div class="daily-input-container">
+                        <!-- Date Selector -->
+                        <div class="date-selector card">
+                            <button class="date-nav" id="prev-date">◀</button>
+                            <div class="date-display">
+                                <input type="date" id="selected-date" class="date-picker">
+                                <span class="day-name" id="day-name">Senin</span>
+                            </div>
+                            <button class="date-nav" id="next-date">▶</button>
+                        </div>
+
+                        <!-- Auto Template Info -->
+                        <div class="card template-info">
+                            <div class="template-info-header">
+                                <span class="template-badge" id="template-badge">📋</span>
+                                <div class="template-details">
+                                    <span class="template-label">Template Otomatis:</span>
+                                    <span class="template-name-display" id="template-name-display">Hari Kerja
+                                        (Apel)</span>
+                                </div>
+                            </div>
+                            <div class="template-preview" id="template-preview">
+                                <!-- Template activities preview -->
+                            </div>
+                        </div>
+
+                        <!-- Meeting Day Option -->
+                        <div class="card meeting-option">
+                            <div class="meeting-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="is-meeting-day">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <div class="meeting-label">
+                                    <span class="meeting-icon">📢</span>
+                                    <span>Hari Rapat / Kegiatan Khusus</span>
+                                </div>
+                            </div>
+                            <div class="meeting-details" id="meeting-details" style="display: none;">
+                                <div class="form-group">
+                                    <label>Nama Kegiatan Rapat:</label>
+                                    <input type="text" id="meeting-name" placeholder="Contoh: Rapat Koordinasi Dinkes">
+                                </div>
+                                <div class="meeting-info">
+                                    <span>⏱️ Total: 450 menit (07:30 - 15:00)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sick Leave Option -->
+                        <div class="card meeting-option sick-leave-option">
+                            <div class="meeting-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="is-sick-leave">
+                                    <span class="toggle-slider sick-slider"></span>
+                                </label>
+                                <div class="meeting-label">
+                                    <span class="meeting-icon">🏥</span>
+                                    <span>Izin Sakit</span>
+                                </div>
+                            </div>
+                            <div class="sick-leave-details" id="sick-leave-details" style="display: none;">
+                                <div class="form-group">
+                                    <label>Keterangan Sakit:</label>
+                                    <input type="text" id="sick-leave-note" placeholder="Contoh: Demam, Flu, dll">
+                                </div>
+                                <div class="meeting-info sick-info">
+                                    <span>⚠️ Total: 0 menit (Tidak ada kegiatan)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- National Holiday Option -->
+                        <div class="card meeting-option holiday-option">
+                            <div class="meeting-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="is-national-holiday">
+                                    <span class="toggle-slider holiday-slider"></span>
+                                </label>
+                                <div class="meeting-label">
+                                    <span class="meeting-icon">🇮🇩</span>
+                                    <span>Libur Nasional</span>
+                                </div>
+                            </div>
+                            <div class="holiday-details" id="holiday-details" style="display: none;">
+                                <div class="form-group">
+                                    <label>Nama Hari Libur:</label>
+                                    <input type="text" id="holiday-name" placeholder="Contoh: Hari Kemerdekaan">
+                                </div>
+                                <div class="meeting-info holiday-info">
+                                    <span>🎉 Total: 0 menit (Hari Libur Nasional)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patient Count - MAIN INPUT -->
+                        <div class="patient-count card main-input" id="patient-input-card">
+                            <h3 class="card-title">📊 Input Jumlah Pasien</h3>
+                            <div class="patient-inputs-large">
+                                <div class="patient-input-group-large">
+                                    <label>👤 Pasien Umum</label>
+                                    <input type="number" id="patient-umum" min="0" value="0" inputmode="numeric">
+                                </div>
+                                <div class="patient-input-group-large">
+                                    <label>🔄 Rujukan</label>
+                                    <input type="number" id="patient-rujukan" min="0" value="0" inputmode="numeric">
+                                </div>
+                                <div class="patient-input-group-large">
+                                    <label>⭐ Khusus</label>
+                                    <input type="number" id="patient-khusus" min="0" value="0" inputmode="numeric">
+                                </div>
+                            </div>
+                            <div class="patient-total">
+                                <span>Total Pasien: </span>
+                                <span id="total-patients-display" class="total-number">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Save -->
+                        <div class="quick-save card">
+                            <div class="save-info">
+                                <span class="save-icon">✅</span>
+                                <span id="save-status">Siap disimpan</span>
+                            </div>
+                            <button class="save-btn-large" id="save-daily">
+                                <span>💾</span> Simpan Hari Ini
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Templates Page -->
+                <div class="page" id="page-templates">
+                    <div class="templates-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Template Kegiatan</h3>
+                                <button class="btn-add-template" id="add-template">
+                                    <span>➕</span> Tambah Template
+                                </button>
+                            </div>
+                            <div class="templates-list" id="templates-list">
+                                <!-- Template items will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div class="page" id="page-reports">
+                    <div class="reports-container">
+                        <!-- Month Selector -->
+                        <div class="card month-selector">
+                            <h3 class="card-title">Pilih Periode</h3>
+                            <div class="month-controls">
+                                <select id="report-month" class="month-select">
+                                    <option value="1">Januari</option>
+                                    <option value="2">Februari</option>
+                                    <option value="3">Maret</option>
+                                    <option value="4">April</option>
+                                    <option value="5">Mei</option>
+                                    <option value="6">Juni</option>
+                                    <option value="7">Juli</option>
+                                    <option value="8">Agustus</option>
+                                    <option value="9">September</option>
+                                    <option value="10">Oktober</option>
+                                    <option value="11">November</option>
+                                    <option value="12">Desember</option>
+                                </select>
+                                <select id="report-year" class="year-select">
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                                <button class="btn-generate" id="generate-report">📊 Tampilkan</button>
+                            </div>
+                        </div>
+
+                        <!-- Report Preview -->
+                        <div class="card report-preview">
+                            <div class="card-header">
+                                <h3 class="card-title">Preview Laporan</h3>
+                                <div class="report-actions">
+                                    <button class="btn-print" id="print-report">
+                                        <span>🖨️</span> Cetak Laporan
+                                    </button>
+                                    <button class="btn-export" id="export-excel">
+                                        <span>📥</span> Export Excel
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="report-table-container" id="report-table-container">
+                                <div class="empty-state">
+                                    <span class="empty-icon">📊</span>
+                                    <p>Pilih periode dan klik Tampilkan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page" id="page-settings">
+                    <div class="settings-container">
+                        <!-- Profile Settings -->
+                        <div class="card">
+                            <h3 class="card-title">Profil Pegawai</h3>
+                            <div class="settings-form">
+                                <div class="form-group">
+                                    <label for="profile-name">Nama Lengkap</label>
+                                    <input type="text" id="profile-name" placeholder="Masukkan nama lengkap">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-nip">NIP</label>
+                                    <input type="text" id="profile-nip" placeholder="Masukkan NIP">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-pangkat">Pangkat / Jabatan</label>
+                                    <input type="text" id="profile-pangkat"
+                                        placeholder="Contoh: VII / Perawat Terampil">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-unit">Unit Kerja</label>
+                                    <input type="text" id="profile-unit"
+                                        placeholder="Contoh: UPTD Puskesmas Tanjungwangi">
+                                </div>
+                                <button class="save-btn" id="save-profile">
+                                    <span>💾</span> Simpan Profil
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Cloud Sync Section -->
+                        <div class="card">
+                            <h3 class="card-title">Sinkronisasi Cloud <span class="badge-beta"
+                                    style="font-size:10px; background:var(--accent-pink); padding:2px 6px; border-radius:4px; margin-left:8px;">BETA</span>
+                            </h3>
+                            <div class="import-export-section">
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Simpan
+                                    data Anda ke cloud agar tidak hilang dan bisa diakses dari perangkat lain yang
+                                    terhubung ke internet.</p>
+                                <div class="import-actions">
+                                    <button class="btn-backup" id="sync-to-cloud"
+                                        style="background: var(--gradient-blue); color: white; border: none;">
+                                        <span>☁️</span> Unggah ke Cloud
+                                    </button>
+                                    <button class="btn-restore" id="sync-from-cloud"
+                                        style="background: var(--gradient-purple); color: white; border: none;">
+                                        <span>📥</span> Unduh dari Cloud
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Import/Export Data -->
+                        <div class="card">
+                            <h3 class="card-title">Import / Export Data</h3>
+                            <div class="import-export-section">
+                                <div class="import-area" id="import-drop-zone">
+                                    <input type="file" id="import-file" accept=".xlsx,.xls" hidden>
+                                    <div class="drop-zone-content">
+                                        <span class="drop-icon">📂</span>
+                                        <p>Drag & drop file Excel di sini</p>
+                                        <p class="drop-hint">atau klik untuk pilih file</p>
+                                    </div>
+                                </div>
+                                <div class="import-actions">
+                                    <button class="btn-backup" id="backup-data">
+                                        <span>💾</span> Backup Data
+                                    </button>
+                                    <button class="btn-restore" id="restore-data">
+                                        <span>📥</span> Restore Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- App Info -->
+                        <div class="card">
+                            <h3 class="card-title">Tentang Aplikasi</h3>
+                            <div class="app-info">
+                                <p><strong>LAK Puskesmas</strong></p>
+                                <p>Versi 1.0.0</p>
+                                <p class="app-desc">Aplikasi Laporan Aktivitas Kerja untuk memudahkan pencatatan dan
+                                    pelaporan kegiatan harian di Puskesmas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Template -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Modal Title</h3>
+                <button class="modal-close" id="modal-close">✕</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Firebase Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/excelHandler.js"></script>
+    <script src="js/dailyInput.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
